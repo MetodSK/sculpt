@@ -1,0 +1,25 @@
+---
+import Container from '../ui/Container.astro';
+import { footer as footerRu } from '../../data/footer';
+import { footer as footerEn } from '../../data/en/footer';
+import type { Lang } from '../../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ru' } = Astro.props;
+const footer = lang === 'en' ? footerEn : footerRu;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[#D8CFBA] py-10">
+  <Container>
+    <div class="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+      <p class="font-display text-2xl font-semibold text-ink">{footer.brand}</p>
+      <p class="text-sm text-ink/60">{footer.tagline}</p>
+      <p class="text-sm text-ink/50">© {year} {footer.brand}</p>
+    </div>
+  </Container>
+</footer>

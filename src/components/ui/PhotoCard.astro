@@ -1,0 +1,37 @@
+---
+interface Props {
+  image?: string | null;
+  alt?: string;
+  className?: string;
+}
+
+const {
+  image = null,
+  alt = '',
+  className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'flex h-full flex-col overflow-hidden rounded-sm border border-[#D8D4CC] bg-[#FCFBF8] transition-colors duration-200 hover:border-[#B9B4AA] hover:bg-white',
+    className,
+  ]}
+>
+  <div class="relative w-full shrink-0 overflow-hidden bg-[#FCFBF8]" style={{ aspectRatio: '4/3' }}>
+    {image ? (
+      <img
+        src={image}
+        alt={alt}
+        loading="lazy"
+        class="absolute inset-0 h-full w-full object-contain object-center"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center px-8 text-center">
+        <p class="text-xs leading-relaxed text-ink/35 md:text-[0.625rem]">
+          Фотография будет добавлена после завершения фотосъёмки.
+        </p>
+      </div>
+    )}
+  </div>
+</div>

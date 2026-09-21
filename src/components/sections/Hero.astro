@@ -1,0 +1,60 @@
+---
+import Container from '../ui/Container.astro';
+import LangSwitch from '../ui/LangSwitch.astro';
+import { hero as heroRu } from '../../data/hero';
+import { hero as heroEn } from '../../data/en/hero';
+import type { Lang } from '../../i18n';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ru' } = Astro.props;
+const hero = lang === 'en' ? heroEn : heroRu;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/gallery/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+
+const mainImage =
+  lang === 'en'
+    ? images['/src/assets/gallery/main-en.png']?.default?.src ?? null
+    : images['/src/assets/gallery/a_wide_studio_like_graphic_poster_composite_scene.png']?.default?.src ?? null;
+---
+
+<section id="hero" class="zone-dark relative flex min-h-screen flex-col justify-center overflow-hidden py-12 md:py-16">
+  <LangSwitch lang={lang} />
+  <Container>
+    <div class="flex w-full flex-col">
+      <p class="text-step-8 font-medium leading-none tracking-tight text-[#d9bd8a]">{hero.brand}</p>
+      <h1 class="mt-8 whitespace-pre-line text-step-5 font-semibold leading-tight tracking-tight text-[#f2ead9] md:text-step-6">{hero.title}</h1>
+      <p class="mt-6 max-w-2xl text-step-1 leading-relaxed text-ink/60">{hero.lead}</p>
+      <div class="mt-10 grid w-full max-w-lg grid-cols-1 gap-6 sm:grid-cols-2">
+        <a
+          href="#gallery"
+          class="inline-flex h-[52px] w-full items-center justify-center whitespace-nowrap bg-[#e7d9b8] p-0 indent-0 text-center text-base font-medium uppercase text-[#241a0e] transition-colors hover:bg-[#f0e4c6] md:text-xs"
+        >
+          <span class="-mr-[0.2em] m-0 block p-0 tracking-[0.2em]">{hero.buttons.primary}</span>
+        </a>
+        <a
+          href="#request-form"
+          class="inline-flex h-[52px] w-full items-center justify-center whitespace-nowrap border border-[#cdb98f]/60 p-0 indent-0 text-center text-base font-medium uppercase text-[#efe7d7] transition-colors hover:border-[#e7d9b8] md:text-xs"
+        >
+          <span class="-mr-[0.2em] m-0 block p-0 tracking-[0.2em]">{hero.buttons.secondary}</span>
+        </a>
+      </div>
+    </div>
+    <div class="mt-10 w-full overflow-hidden rounded-sm border border-[#3a2c1a] bg-[rgba(38,28,16,0.45)] lg:mt-14">
+      <img
+        src={mainImage}
+        alt={hero.image.caption}
+        width={1672}
+        height={941}
+        loading="lazy"
+        class="block h-auto w-full object-contain"
+      />
+    </div>
+  </Container>
+</section>

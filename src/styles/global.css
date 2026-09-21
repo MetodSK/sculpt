@@ -1,0 +1,222 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-paper: #faf9f4;
+  --color-ink: #1f1f1f;
+
+  --text-step-1: 0.9375rem;
+  --text-step-2: 1.1875rem;
+  --text-step-3: 1.5rem;
+  --text-step-4: 1.875rem;
+  --text-step-5: 2.375rem;
+  --text-step-6: 2.9375rem;
+  --text-step-7: 3.6875rem;
+  --text-step-8: 4.625rem;
+  --text-step-9: 5.75rem;
+  --text-step-10: 7.1875rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #e6e1d5;
+  }
+
+  body {
+    background-color: #f2efe7;
+    background-image:
+      radial-gradient(
+        ellipse 130% 85% at 50% 16%,
+        rgba(255, 253, 247, 0.95) 0%,
+        rgba(247, 244, 236, 0.55) 48%,
+        rgba(233, 228, 217, 0) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(250, 247, 240, 0.6) 0%,
+        rgba(241, 236, 225, 0.35) 55%,
+        rgba(226, 219, 204, 0.55) 100%
+      );
+    color: var(--color-ink);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+}
+
+/* --- Visual zones ------------------------------------------------------ */
+
+@utility zone-dark {
+  background-color: #211910;
+  background-image:
+    radial-gradient(
+      ellipse 90% 65% at 50% 0%,
+      rgba(96, 70, 40, 0.5) 0%,
+      rgba(33, 25, 16, 0) 62%
+    ),
+    linear-gradient(180deg, #251c11 0%, #1c140c 100%);
+  color: #efe7d7;
+}
+
+@utility zone-photo {
+  background-color: #1d150e;
+  background-image:
+    radial-gradient(
+      ellipse 80% 55% at 50% 8%,
+      rgba(112, 82, 46, 0.42) 0%,
+      rgba(29, 21, 14, 0) 60%
+    ),
+    linear-gradient(180deg, #201810 0%, #170f09 100%);
+  color: #ece3d2;
+}
+
+@utility zone-doc {
+  background-color: #191310;
+  background-image:
+    radial-gradient(
+      ellipse 85% 60% at 50% 100%,
+      rgba(74, 56, 36, 0.35) 0%,
+      rgba(25, 19, 16, 0) 65%
+    ),
+    linear-gradient(180deg, #1b1410 0%, #150f0c 100%);
+  color: #e6ddcc;
+}
+
+@utility zone-archive {
+  background-color: #f0ebdf;
+  background-image:
+    radial-gradient(
+      ellipse 120% 80% at 50% 12%,
+      rgba(255, 252, 244, 0.9) 0%,
+      rgba(240, 235, 223, 0) 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(244, 239, 228, 0.8) 0%,
+      rgba(233, 226, 211, 0.75) 100%
+    );
+}
+
+/* --- Background typography --------------------------------------------- */
+
+@utility ghost-num {
+  position: absolute;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.78;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+  user-select: none;
+}
+
+@utility ghost-word {
+  position: absolute;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* --- Themed primitives ---------------------------------------------------
+   Unlayered on purpose: these must win over Tailwind utilities so that the
+   same ink/paper classes read correctly on dark zones. */
+
+.textblock {
+  background: rgba(250, 247, 239, 0.82);
+  border: 1px solid rgba(31, 26, 18, 0.12);
+}
+
+.zone-dark .textblock,
+.zone-photo .textblock,
+.zone-doc .textblock {
+  background: rgba(41, 31, 19, 0.5);
+  border-color: rgba(216, 199, 164, 0.22);
+}
+
+.zone-dark .text-ink,
+.zone-photo .text-ink,
+.zone-doc .text-ink {
+  color: #f1eadf;
+}
+.zone-dark .text-ink\/85,
+.zone-photo .text-ink\/85,
+.zone-doc .text-ink\/85 {
+  color: rgba(241, 234, 223, 0.92);
+}
+.zone-dark .text-ink\/60,
+.zone-photo .text-ink\/60,
+.zone-doc .text-ink\/60 {
+  color: rgba(235, 228, 218, 0.88);
+}
+.zone-dark .text-ink\/50,
+.zone-photo .text-ink\/50,
+.zone-doc .text-ink\/50 {
+  color: rgba(235, 228, 218, 0.66);
+}
+.zone-dark .text-ink\/40,
+.zone-photo .text-ink\/40,
+.zone-doc .text-ink\/40 {
+  color: rgba(235, 228, 218, 0.58);
+}
+.zone-dark .text-ink\/35,
+.zone-photo .text-ink\/35,
+.zone-doc .text-ink\/35 {
+  color: rgba(235, 228, 218, 0.52);
+}
+.zone-dark .text-ink\/25,
+.zone-photo .text-ink\/25,
+.zone-doc .text-ink\/25 {
+  color: rgba(235, 228, 218, 0.46);
+}
+.zone-dark .text-ink\/15,
+.zone-photo .text-ink\/15,
+.zone-doc .text-ink\/15 {
+  color: rgba(235, 228, 218, 0.32);
+}
+.zone-dark .bg-ink\/10,
+.zone-dark .bg-ink\/20,
+.zone-photo .bg-ink\/10,
+.zone-photo .bg-ink\/20,
+.zone-doc .bg-ink\/10,
+.zone-doc .bg-ink\/20 {
+  background-color: rgba(216, 199, 164, 0.32);
+}
+.zone-dark .border-\[\#D8D4CC\],
+.zone-photo .border-\[\#D8D4CC\],
+.zone-doc .border-\[\#D8D4CC\] {
+  border-color: rgba(216, 199, 164, 0.28);
+}
+.zone-dark .hover\:border-ink\/60:hover,
+.zone-photo .hover\:border-ink\/60:hover,
+.zone-doc .hover\:border-ink\/60:hover {
+  border-color: rgba(233, 220, 190, 0.75);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --text-step-1: 1rem;
+    --text-step-5: 2.25rem;
+  }
+
+  .leading-relaxed {
+    line-height: 1.55;
+  }
+}

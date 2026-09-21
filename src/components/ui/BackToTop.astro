@@ -1,0 +1,61 @@
+---
+import type { Lang } from '../../i18n';
+import { ui } from '../../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ru' } = Astro.props;
+const label = ui[lang].backToTop;
+---
+
+<button
+  id="back-to-top"
+  type="button"
+  aria-label={label}
+  title={label}
+  class="pointer-events-none fixed bottom-5 right-5 z-50 flex h-11 w-11 translate-y-3 items-center justify-center border border-ink/25 bg-[#FCFBF8]/95 p-0 text-ink opacity-0 shadow-sm transition-all duration-300 ease-out hover:border-ink/60 focus-visible:border-ink/60 focus-visible:outline-none md:bottom-8 md:right-8 md:h-12 md:w-12"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    class="h-5 w-5"
+    aria-hidden="true"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6"></path>
+  </svg>
+</button>
+
+<script>
+  const button = document.getElementById('back-to-top');
+  const material = document.getElementById('material');
+
+  if (button && material) {
+    const setHidden = (hidden: boolean) => {
+      button.classList.toggle('opacity-0', hidden);
+      button.classList.toggle('translate-y-3', hidden);
+      button.classList.toggle('pointer-events-none', hidden);
+      button.setAttribute('aria-hidden', String(hidden));
+      button.tabIndex = hidden ? -1 : 0;
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const reached = entry.isIntersecting || entry.boundingClientRect.top <= 0;
+        setHidden(!reached);
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(material);
+
+    button.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>

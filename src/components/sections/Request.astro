@@ -1,0 +1,170 @@
+---
+import Container from '../ui/Container.astro';
+import TextBlock from '../ui/TextBlock.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import { request as requestRu } from '../../data/request';
+import { request as requestEn } from '../../data/en/request';
+import type { Lang } from '../../i18n';
+import { ui } from '../../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ru' } = Astro.props;
+const request = lang === 'en' ? requestEn : requestRu;
+const t = ui[lang];
+const formI18n = JSON.stringify({ ...t.form, lang });
+---
+
+<section id="request" class="zone-archive relative overflow-hidden py-10 md:py-14">
+  <span aria-hidden="true" class="ghost-num bottom-[-2vw] right-[1vw] text-[30vw] text-[rgba(31,26,18,0.06)] md:bottom-[-3vw] md:text-[16vw]">05</span>
+  <Container className="relative z-[2]">
+    <TextBlock>
+      <SectionHeader number={request.number} title={request.title} />
+      <div class="mt-10 space-y-5 text-justify text-step-2 leading-relaxed text-ink/60">
+        {request.paragraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+    </TextBlock>
+    <div class="mt-10 border border-[#D8CFBA] bg-[rgba(252,250,243,0.72)] p-5 md:p-8">
+    <form id="request-form" class="w-full" novalidate data-i18n={formI18n}>
+      <input type="hidden" name="website" value="" tabindex="-1" autocomplete="off" />
+      <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="flex w-full flex-col">
+          <label for="rf-name" class="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-ink/60">{t.form.nameLabel}</label>
+          <input
+            id="rf-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            required
+            class="h-[52px] w-full border border-[#D8D4CC] bg-[#FCFBF8] px-4 text-step-1 text-ink placeholder:text-ink/35 focus:border-ink/40 focus:outline-none"
+          />
+        </div>
+        <div class="flex w-full flex-col">
+          <label for="rf-email" class="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-ink/60">Email</label>
+          <input
+            id="rf-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            class="h-[52px] w-full border border-[#D8D4CC] bg-[#FCFBF8] px-4 text-step-1 text-ink placeholder:text-ink/35 focus:border-ink/40 focus:outline-none"
+          />
+        </div>
+      </div>
+      <div class="mt-6 flex w-full flex-col">
+          <label for="rf-message" class="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-ink/60">{t.form.messageLabel}</label>
+        <textarea
+          id="rf-message"
+          name="message"
+          rows="4"
+          required
+          class="w-full resize-y border border-[#D8D4CC] bg-[#FCFBF8] px-4 py-3 text-step-1 text-ink placeholder:text-ink/35 focus:border-ink/40 focus:outline-none"
+        ></textarea>
+      </div>
+      <p id="rf-error" class="mt-4 hidden text-sm text-ink/60"></p>
+      <button
+        type="submit"
+        class="mt-6 flex h-[52px] w-full items-center justify-center bg-ink text-base font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:bg-ink/85 md:w-[240px] md:text-xs"
+      >
+        {t.form.submit}
+      </button>
+    </form>
+    </div>
+    <div id="request-success" class="mt-10 hidden border border-[#D8CFBA] bg-[#FCFBF8] px-6 py-10">
+      <p class="text-step-3 font-medium leading-relaxed text-ink">{t.form.success}</p>
+    </div>
+  </Container>
+</section>
+
+<script>
+  const form = document.getElementById('request-form');
+  const error = document.getElementById('rf-error');
+  const success = document.getElementById('request-success');
+  const submitBtn = form?.querySelector('button[type="submit"]');
+
+  const M = form && 'i18n' in form.dataset ? JSON.parse(form.dataset.i18n as string) : null;
+
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const name = form.elements['name'].value.trim();
+    const email = form.elements['email'].value.trim();
+    const message = form.elements['message'].value.trim();
+
+    const invalid = [];
+    if (!name) invalid.push(M ? M.fields.name : 'Имя');
+    if (!email || !EMAIL_PATTERN.test(email)) invalid.push(M ? M.fields.email : 'Email');
+    if (!message) invalid.push(M ? M.fields.message : 'Сообщение');
+
+    if (invalid.length > 0) {
+      error.textContent = (M ? M.invalidPrefix : 'Заполните корректно: ') + invalid.join(', ');
+      error.classList.remove('hidden');
+      return;
+    }
+
+    error.classList.add('hidden');
+    submitBtn.disabled = true;
+
+    let response;
+    try {
+      response = await fetch('/api/send.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          website: form.elements['website']?.value ?? '',
+        }),
+      });
+    } catch (_) {
+      submitBtn.disabled = false;
+      error.textContent = M ? M.networkError : 'Не удалось отправить запрос. Проверьте соединение и попробуйте ещё раз.';
+      error.classList.remove('hidden');
+      return;
+    }
+
+    if (response.status === 429) {
+      submitBtn.disabled = false;
+      error.textContent = M ? M.tooMany : 'Слишком много запросов. Пожалуйста, подождите немного и попробуйте снова.';
+      error.classList.remove('hidden');
+      return;
+    }
+
+    if (response.status === 413 || response.status >= 500) {
+      submitBtn.disabled = false;
+      error.textContent = M ? M.serverError : 'Не удалось отправить запрос. Попробуйте ещё раз чуть позже.';
+      error.classList.remove('hidden');
+      return;
+    }
+
+    let result = null;
+    if (response.status === 200 || response.status === 422) {
+      try {
+        result = await response.json();
+      } catch (_) {
+        /* ответ не JSON — обработаем ниже как ошибку */
+      }
+    }
+
+    if (response.ok && result && result.success) {
+      form.classList.add('hidden');
+      success.classList.remove('hidden');
+      return;
+    }
+
+    submitBtn.disabled = false;
+    error.textContent =
+      response.status === 422 && result && typeof result.message === 'string' && (!M || M.lang === 'ru')
+        ? result.message
+        : M
+          ? M.serverError
+          : 'Не удалось отправить запрос. Попробуйте ещё раз чуть позже.';
+    error.classList.remove('hidden');
+  });
+</script>

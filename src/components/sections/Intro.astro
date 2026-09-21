@@ -1,0 +1,20 @@
+---
+import Container from '../ui/Container.astro';
+import { intro } from '../../data/intro';
+---
+
+<section id="intro" class="section-pad">
+  <Container class="flex w-full flex-col">
+    <p class="text-step-8 font-medium leading-none tracking-tight text-ink/85">{intro.brand}</p>
+    <h1 class="mt-8 whitespace-pre-line text-step-5 font-semibold leading-tight tracking-tight text-ink md:text-step-6">{intro.title}</h1>
+    <p class="mt-6 text-step-1 leading-relaxed text-ink/60">{intro.lead}</p>
+    <div class="mt-10">
+      <a
+        href={intro.buttonHref}
+        class="flex h-[52px] w-full items-center justify-center border border-ink/25 text-base font-medium uppercase tracking-[0.2em] text-ink transition-colors hover:border-ink/60 md:w-[280px] md:text-xs"
+      >
+        {intro.button}
+      </a>
+    </div>
+  </Container>
+</section>

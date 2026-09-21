@@ -1,0 +1,40 @@
+---
+import Container from '../ui/Container.astro';
+import TextBlock from '../ui/TextBlock.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import { object as objectRu } from '../../data/object';
+import { object as objectEn } from '../../data/en/object';
+import type { Lang } from '../../i18n';
+import { ui } from '../../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ru' } = Astro.props;
+const object = lang === 'en' ? objectEn : objectRu;
+const t = ui[lang];
+---
+
+<section id="object" class="zone-dark relative overflow-hidden py-10 md:py-14">
+  <span aria-hidden="true" class="ghost-word right-[-3vw] top-[1vw] text-[16vw] text-[rgba(236,222,196,0.06)] md:right-[-2vw] md:top-[2vw] md:text-[9vw]">{t.ghosts.object}</span>
+  <Container className="relative z-[2]">
+    <TextBlock>
+      <SectionHeader number={object.number} title={object.title} />
+      <p class="mt-10 text-justify text-step-2 leading-relaxed text-ink/60">
+        {object.lead} {object.body}
+      </p>
+      <div class="mt-12 max-w-md">
+        <h3 class="text-step-3 font-semibold tracking-tight text-ink">{t.specsHeading}</h3>
+        <dl class="mt-6 border-y border-[#D8D4CC]">
+          {object.specs.map((spec) => (
+            <div class="flex items-baseline justify-between gap-6 border-b border-[#D8D4CC] py-3 last:border-b-0">
+              <dt class="text-sm leading-relaxed text-ink/60">{spec.label}</dt>
+              <dd class="text-sm font-medium leading-relaxed text-ink">{spec.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </TextBlock>
+  </Container>
+</section>
